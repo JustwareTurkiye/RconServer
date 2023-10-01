@@ -174,7 +174,11 @@ class RconThread extends Thread{
 									break;
 								}
 								socket_getpeername($sock, $addr, $port);
-								if($payload === $this->password){
+								if($addr !== "127.0.0.1"){
+									$disconnect[$id] = $sock;
+									$this->writePacket($sock, -1, 2, "");
+									$this->logger->info("Unsuccessful connection from: /$addr:$port (unauthorised ip address)");
+								}elseif($payload === $this->password){
 									$this->logger->info("Successful Rcon connection from: /$addr:$port");
 									$this->writePacket($sock, $requestID, 2, "");
 									$authenticated[$id] = true;
